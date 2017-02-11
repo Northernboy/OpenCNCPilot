@@ -91,5 +91,231 @@ namespace OpenCNCPilot
 
 			TextBoxManual.Text = "G10 L2 P0 X0 Y0 Z0";
         }
-	}
+
+
+        // Commands for Jog Tab
+        private void ButtonManualXDec_Click(object sender, RoutedEventArgs e)
+        {
+            if (machine.Mode != Machine.OperatingMode.Manual)
+                return;
+
+            TextBoxManual.Text = "G21 G91 G0  X-" + JogIncrement.Text;
+            ManualSend();
+        }
+
+        private void ButtonManualXInc_Click(object sender, RoutedEventArgs e)
+        {
+            if (machine.Mode != Machine.OperatingMode.Manual)
+                return;
+
+            TextBoxManual.Text = "G21 G91 G0  X" + JogIncrement.Text;
+            ManualSend();
+        }
+
+        private void ButtonManualYDec_Click(object sender, RoutedEventArgs e)
+        {
+            if (machine.Mode != Machine.OperatingMode.Manual)
+                return;
+
+            TextBoxManual.Text = "G21 G91 G0  Y-" + JogIncrement.Text;
+            ManualSend();
+        }
+
+        private void ButtonManualYInc_Click(object sender, RoutedEventArgs e)
+        {
+            if (machine.Mode != Machine.OperatingMode.Manual)
+                return;
+
+            TextBoxManual.Text = "G21 G91 G0  Y" + JogIncrement.Text;
+            ManualSend();
+        }
+
+        private void ButtonManualZDec_Click(object sender, RoutedEventArgs e)
+        {
+            if (machine.Mode != Machine.OperatingMode.Manual)
+                return;
+
+            TextBoxManual.Text = "G21 G91 G0  Z-" + JogIncrement.Text;
+            ManualSend();
+        }
+
+        private void ButtonManualZInc_Click(object sender, RoutedEventArgs e)
+        {
+            if (machine.Mode != Machine.OperatingMode.Manual)
+                return;
+
+            TextBoxManual.Text = "G21 G91 G0  Z" + JogIncrement.Text;
+            ManualSend();
+        }
+
+        private void Button100_Click(object sender, RoutedEventArgs e)
+        {
+
+            JogIncrement.Text = "100";
+        }
+
+        private void Button10_Click(object sender, RoutedEventArgs e)
+        {
+
+            JogIncrement.Text = "10";
+        }
+
+        private void Button1_Click(object sender, RoutedEventArgs e)
+        {
+
+            JogIncrement.Text = "1";
+        }
+
+        private void ButtonHome_Click(object sender, RoutedEventArgs e)
+        {
+            if (machine.Mode != Machine.OperatingMode.Manual)
+                return;
+
+            TextBoxManual.Text = "$H";
+            ManualSend();
+        }
+
+        private void ButtonX0Y0_Click(object sender, RoutedEventArgs e)
+        {
+            if (machine.Mode != Machine.OperatingMode.Manual)
+                return;
+
+            TextBoxManual.Text = "G90 G0 X0 Y0";
+            ManualSend();
+        }
+
+        private void ButtonProbe_Click(object sender, RoutedEventArgs e)
+        {
+            if (machine.Mode != Machine.OperatingMode.Manual)
+                return;
+
+            TextBoxManual.Text = "G38.2 Z-10 F10";
+            ManualSend();
+        }
+
+        private void Button_Zero_X_Click(object sender, RoutedEventArgs e)
+        {
+            if (machine.Mode != Machine.OperatingMode.Manual)
+                return;
+
+            TextBoxManual.Text = "G90 G10 L20 P0 X0";
+            ManualSend();
+        }
+
+        private void Button_Zero_Y_Click(object sender, RoutedEventArgs e)
+        {
+            if (machine.Mode != Machine.OperatingMode.Manual)
+                return;
+
+            TextBoxManual.Text = "G90 G10 L20 P0 Y0";
+            ManualSend();
+        }
+
+        private void Button_Zero_Z_Click(object sender, RoutedEventArgs e)
+        {
+            if (machine.Mode != Machine.OperatingMode.Manual)
+                return;
+
+            TextBoxManual.Text = "G90 G10 L20 P0 Z0";
+            ManualSend();
+        }
+
+        private void Button_Start_Motor_Click(object sender, RoutedEventArgs e)
+        {
+            if (machine.Mode != Machine.OperatingMode.Manual)
+                return;
+
+            TextBoxManual.Text = "M03";
+            ManualSend();
+        }
+
+        private void Button_Stop_Motor_Click(object sender, RoutedEventArgs e)
+        {
+            if (machine.Mode != Machine.OperatingMode.Manual)
+                return;
+
+            TextBoxManual.Text = "M05";
+            ManualSend();
+        }
+
+        //Commands for Override Tab
+        private void ButtonFeedInc10_Click(object sender, RoutedEventArgs e)
+        {
+
+            machine.OV_Command(0x91);
+        }
+
+        private void ButtonFeedDec10_Click(object sender, RoutedEventArgs e)
+        {
+
+            machine.OV_Command(0x92);
+        }
+
+        private void ButtonFeedInc1_Click(object sender, RoutedEventArgs e)
+        {
+
+            machine.OV_Command(0x93);
+        }
+
+        private void ButtonFeedDec1_Click(object sender, RoutedEventArgs e)
+        {
+
+            machine.OV_Command(0x94);
+        }
+
+        private void ButtonFeedReset_Click(object sender, RoutedEventArgs e)
+        {
+
+            machine.OV_Command(0x90);
+        }
+
+        private void ButtonRapid25_Click(object sender, RoutedEventArgs e)
+        {
+
+            machine.OV_Command(0x97);
+        }
+
+        private void ButtonRapid50_Click(object sender, RoutedEventArgs e)
+        {
+
+            machine.OV_Command(0x96);
+        }
+
+
+        private void ButtonRapidReset_Click(object sender, RoutedEventArgs e)
+        {
+
+            machine.OV_Command(0x95);
+        }
+
+        private void ButtonSpindleInc10_Click(object sender, RoutedEventArgs e)
+        {
+
+            machine.OV_Command(0x9A);
+        }
+
+        private void ButtonSpindleDec10_Click(object sender, RoutedEventArgs e)
+        {
+
+            machine.OV_Command(0x9B);
+        }
+
+        private void ButtonSpindleInc1_Click(object sender, RoutedEventArgs e)
+        {
+
+            machine.OV_Command(0x9C);
+        }
+
+        private void ButtonSpindleDec1_Click(object sender, RoutedEventArgs e)
+        {
+
+            machine.OV_Command(0x9D);
+        }
+
+        private void ButtonSpindleReset_Click(object sender, RoutedEventArgs e)
+        {
+
+            machine.OV_Command(0x99);
+        }
+    }
 }
