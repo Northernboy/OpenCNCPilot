@@ -47,8 +47,11 @@ namespace OpenCNCPilot.Communication
 
 		public Vector3 MachinePosition { get; private set; } = new Vector3();   //No events here, the parser triggers a single event for both
 		public Vector3 WorkPosition { get; private set; } = new Vector3();
+        public Vector3 WCO { get; private set; } = new Vector3();
+        public string FOV, ROV, SOV;  //Override Values
+        public string Version;  //Grbl Major Version Number
 
-		private ReadOnlyCollection<string> _file = new ReadOnlyCollection<string>(new string[0]);
+        private ReadOnlyCollection<string> _file = new ReadOnlyCollection<string>(new string[0]);
 		public ReadOnlyCollection<string> File
 		{
 			get { return _file; }
@@ -297,44 +300,45 @@ namespace OpenCNCPilot.Communication
 					}
 					else
 					{
-						if (line.StartsWith("error: "))
-						{
-							if (Sent.Count != 0)
-							{
-								string errorline = (string)Sent.Dequeue();
+                        if (line.StartsWith("error: "))
+                        {
+                            if (Sent.Count != 0)
+                            {
+                                string errorline = (string)Sent.Dequeue();
 
-								RaiseEvent(ReportError, $"{line}: {errorline}");
-								BufferState -= errorline.Length + 1;
-							}
-							else
-							{
-								if ((DateTime.Now - StartTime).TotalMilliseconds > 200)
-									RaiseEvent(ReportError, $"Received <{line}> without anything in the Sent Buffer");
+                                RaiseEvent(ReportError, $"{line}: {errorline}");
+                                BufferState -= errorline.Length + 1;
+                            }
+                            else
+                            {
+                                if ((DateTime.Now - StartTime).TotalMilliseconds > 200)
+                                    RaiseEvent(ReportError, $"Received <{line}> without anything in the Sent Buffer");
 
-								BufferState = 0;
-							}
+                                BufferState = 0;
+                            }
 
-							Mode = OperatingMode.Manual;
-						}
-						else if (line.StartsWith("<"))
-							RaiseEvent(ParseStatus, line);
-						else if (line.StartsWith("[PRB:"))
-						{
-							RaiseEvent(ParseProbe, line);
-							RaiseEvent(LineReceived, line);
-						}
-						else if (line.StartsWith("["))
-						{
-							RaiseEvent(UpdateStatus, line);
-							RaiseEvent(LineReceived, line);
-						}
-						else if (line.StartsWith("ALARM"))
-						{
-							RaiseEvent(NonFatalException, line);
-							Mode = OperatingMode.Manual;
-						}
-						else if (line.Length > 0)
-							RaiseEvent(LineReceived, line);
+                            Mode = OperatingMode.Manual;
+                        }
+                        else if (line.StartsWith("<"))
+                            RaiseEvent(ParseStatus, line);
+                        else if (line.StartsWith("[PRB:"))
+                        {
+                            RaiseEvent(ParseProbe, line);
+                            RaiseEvent(LineReceived, line);
+                        }
+                        else if (line.StartsWith("["))
+                        {
+                            RaiseEvent(UpdateStatus, line);
+                            RaiseEvent(LineReceived, line);
+                        }
+                        else if (line.StartsWith("ALARM"))
+                        {
+                            RaiseEvent(NonFatalException, line);
+                            Mode = OperatingMode.Manual;
+                        }
+                
+                        else if (line.Length > 0)
+                            RaiseEvent(LineReceived, line);
 					}
 				}
 			}
@@ -425,7 +429,18 @@ namespace OpenCNCPilot.Communication
 			ToSend.Enqueue(line);
 		}
 
-		public void SoftReset()
+        public void OV_Command(int cmd)  //command for override functions
+        {
+            if (!Connected)
+            {
+                RaiseEvent(Info, "Not Connected");
+                return;
+            }
+
+            ToSendPriority.Enqueue((char)cmd);
+        }
+
+        public void SoftReset()
 		{
 			if (!Connected)
 			{
@@ -620,8 +635,8 @@ namespace OpenCNCPilot.Communication
 					DistanceMode = ParseDistanceMode.Incremental;
 			}
 		}
-
-		private static Regex StatusEx = new Regex(@"<(?'State'Idle|Run|Hold|Home|Alarm|Check|Door)(?:,MPos:(?'MX'-?[0-9\.]*),(?'MY'-?[0-9\.]*),(?'MZ'-?[0-9\.]*))?(?:,WPos:(?'WX'-?[0-9\.]*),(?'WY'-?[0-9\.]*),(?'WZ'-?[0-9\.]*))?(?:,Buf:(?'Buf'[0-9]*))?(?:,RX:(?'RX'[0-9]*))?(?:,Ln:(?'L'[0-9]*))?(?:,F:(?'F'[0-9\.]*))?(?:,Lim:(?'Lim'[0-1]*))?(?:,Ctl:(?'Ctl'[0-1]*))?>", RegexOptions.Compiled);
+                                                      //new RegEx for GRBL1.1 Status   
+		private static Regex StatusEx = new Regex(@"<(?'State'Idle|Run|Hold:0|Hold:1|Home|Alarm|Check|Door)(?:\|MPos:(?'MX'-?[0-9\.]*),(?'MY'-?[0-9\.]*),(?'MZ'-?[0-9\.]*))?(?:\|WPos:(?'WX'-?[0-9\.]*),(?'WY'-?[0-9\.]*),(?'WZ'-?[0-9\.]*))?(?:\|Bf:(?'Buf'[0-9]*),(?'Buf1'[0-9]*))?(?:\|RX:(?'RX'[0-9]*))?(?:\|Ln:(?'L'[0-9]*))?(?:\|F:(?'F'[0-9\.]*))?(?:\|Pn:(?'PN'P]*))?(?:\|WCO:(?'XO'-?[0-9\.]*),(?'YO'-?[0-9\.]*),(?'ZO'-?[0-9\.]*))?(?:\|Ov:(?'Fe'-?[0-9\.]*),(?'R'-?[0-9\.]*),(?'S'-?[0-9\.]*))?(?:\|Lim:(?'Lim'[0-1]*))?(?:\|Ctl:(?'Ctl'[0-1]*))?>", RegexOptions.Compiled);
 
 		/// <summary>
 		/// Parses a recevied status report (answer to '?')
@@ -643,10 +658,22 @@ namespace OpenCNCPilot.Communication
 				Status = status.Value;
 			}
 
-			Vector3 NewMachinePosition, NewWorkPosition;
+			Vector3 NewMachinePosition, NewWorkPosition, NewWCO;
 			bool update = false;
 
-			Group mx = statusMatch.Groups["MX"], my = statusMatch.Groups["MY"], mz = statusMatch.Groups["MZ"];
+            Group xo = statusMatch.Groups["XO"], yo = statusMatch.Groups["YO"], zo = statusMatch.Groups["ZO"]; //New Group for Offsets
+
+            if (xo.Success)
+            {
+                NewWCO = new Vector3(double.Parse(xo.Value, Constants.DecimalParseFormat), double.Parse(yo.Value, Constants.DecimalParseFormat), double.Parse(zo.Value, Constants.DecimalParseFormat));
+
+                if (WCO != NewWCO)
+                    update = true;
+
+                WCO = NewWCO;
+            }
+
+            Group mx = statusMatch.Groups["MX"], my = statusMatch.Groups["MY"], mz = statusMatch.Groups["MZ"]; //Group for Machine Position
 
 			if (mx.Success)
 			{
@@ -656,11 +683,13 @@ namespace OpenCNCPilot.Communication
 					update = true;
 
 				MachinePosition = NewMachinePosition;
+                WorkPosition = MachinePosition - WCO; //Calculate Work Position from Machine Position & Offsets if Machine Position is given
+
 			}
 
-			Group wx = statusMatch.Groups["WX"], wy = statusMatch.Groups["WY"], wz = statusMatch.Groups["WZ"];
+            Group wx = statusMatch.Groups["WX"], wy = statusMatch.Groups["WY"], wz = statusMatch.Groups["WZ"]; //Group for Work Position
 
-			if (wx.Success)
+            if (wx.Success)
 			{
 				NewWorkPosition = new Vector3(double.Parse(wx.Value, Constants.DecimalParseFormat), double.Parse(wy.Value, Constants.DecimalParseFormat), double.Parse(wz.Value, Constants.DecimalParseFormat));
 
@@ -668,9 +697,22 @@ namespace OpenCNCPilot.Communication
 					update = true;
 
 				WorkPosition = NewWorkPosition;
-			}
+                MachinePosition = WorkPosition + WCO; //Calculate Machine Position from Work Position & Offsets if Work Position is given
+            }
 
-			if (update && Connected && PositionUpdateReceived != null)
+            Group f = statusMatch.Groups["Fe"], r = statusMatch.Groups["R"], s = statusMatch.Groups["S"]; //Group for Overrides
+
+            if (f.Success)
+            {
+                FOV = f.Value;
+                ROV = r.Value;
+                SOV = s.Value;
+
+                update = true;
+  
+            }
+
+            if (update && Connected && PositionUpdateReceived != null)
 				PositionUpdateReceived.Invoke();
 		}
 
