@@ -94,19 +94,107 @@
                 <Border Style="{StaticResource stylePanelOut}">
                     <Expander Header="Manual">
                         <Grid Width="240" Height="80">
-                            <TextBox Name="TextBoxManual" Height="23" Margin="10,10,51,47" PreviewKeyDown="TextBoxManual_PreviewKeyDown"/>
-                            <Button Name="ButtonManualSend" Click="ButtonManualSend_Click" Style="{StaticResource styleButton}" Margin="0,10,10,0" Height="23" VerticalAlignment="Top" HorizontalAlignment="Right" Content="Send"/>
-                            <Button Name="ButtonManualSetG10Zero" Click="ButtonManualSetG10Zero_Click" Style="{StaticResource styleButton}" Margin="80,38,0,0" VerticalAlignment="Top" HorizontalAlignment="Left" Content="Zero (G10)"
-									ToolTip="Set Position to (0,0,0) with 'G10 L2 P0 XYZ' where XYZ are the current machine coordinates,&#x0a;this has the advantage that it will be persistent through a reset&#x0a;This button will NOT automatically send the command"/>
-                            <Button Name="ButtonManualSetG92Zero" Click="ButtonManualSetG92Zero_Click" Style="{StaticResource styleButton}" Margin="10,38,0,0" VerticalAlignment="Top" HorizontalAlignment="Left" Content="Zero (G92)"
-									ToolTip="Set Position to (0,0,0) with 'G92 X0 Y0 Z0',&#x0a;this has the disadvantage that it will NOT be persistent through a reset&#x0a;This button will NOT automatically send the command"/>
-                            <Button Name="ButtonManualResetG10" Click="ButtonManualResetG10_Click" Style="{StaticResource styleButton}" Margin="150,38,0,0" VerticalAlignment="Top" HorizontalAlignment="Left" Content="Reset (G10)"
-									ToolTip="Reset Work Coordinate System (G54) with 'G10 L2 P0 X0 Y0 Z0'&#x0a;This button will NOT automatically send the command"/>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition/>
+                                <ColumnDefinition Width="29*"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBox Name="TextBoxManual" Height="23" Margin="2,10,51,47" PreviewKeyDown="TextBoxManual_PreviewKeyDown" Grid.Column="1"/>
+                            <Button Name="ButtonManualSend" Click="ButtonManualSend_Click" Style="{StaticResource styleButton}" Margin="0,10,10,0" Height="23" VerticalAlignment="Top" HorizontalAlignment="Right" Content="Send" Grid.Column="1"/>
+                            <Button Name="ButtonManualSetG10Zero" Click="ButtonManualSetG10Zero_Click" Style="{StaticResource styleButton}" Margin="72,38,0,0" VerticalAlignment="Top" HorizontalAlignment="Left" Content="Zero (G10)"
+									ToolTip="Set Position to (0,0,0) with 'G10 L2 P0 XYZ' where XYZ are the current machine coordinates,&#x0a;this has the advantage that it will be persistent through a reset&#x0a;This button will NOT automatically send the command" Grid.Column="1"/>
+                            <Button Name="ButtonManualSetG92Zero" Click="ButtonManualSetG92Zero_Click" Style="{StaticResource styleButton}" Margin="2,38,0,0" VerticalAlignment="Top" HorizontalAlignment="Left" Content="Zero (G92)"
+									ToolTip="Set Position to (0,0,0) with 'G92 X0 Y0 Z0',&#x0a;this has the disadvantage that it will NOT be persistent through a reset&#x0a;This button will NOT automatically send the command" Grid.Column="1"/>
+                            <Button Name="ButtonManualResetG10" Click="ButtonManualResetG10_Click" Style="{StaticResource styleButton}" Margin="142,38,0,0" VerticalAlignment="Top" HorizontalAlignment="Left" Content="Reset (G10)"
+									ToolTip="Reset Work Coordinate System (G54) with 'G10 L2 P0 X0 Y0 Z0'&#x0a;This button will NOT automatically send the command" Grid.Column="1"/>
                         </Grid>
                     </Expander>
                 </Border>
-            </StackPanel>
+                <Border Style="{StaticResource stylePanelOut}">
+                    <Expander Header="Jog">
+                        <Grid Width="240" Height="160">
+                            <RadioButton x:Name="Button1"  Click="Button1_Click" Content="1" HorizontalAlignment="Left" Margin="191,25,0,0" VerticalAlignment="Top"
+                                         ToolTip="Set Step Size to 1."/>
+                            <RadioButton x:Name="Button10"  Click="Button10_Click" Content="10" HorizontalAlignment="Left" Margin="191,45,0,0" VerticalAlignment="Top"
+                                         ToolTip="Set Step Size to 10."/>
+                            <RadioButton x:Name="Button100"  Click="Button100_Click" Content="100" HorizontalAlignment="Left" Margin="191,65,0,0" VerticalAlignment="Top"
+                                         ToolTip="Set Step Size to 100."/>
+                            <TextBox x:Name="JogIncrement" Margin="199,4,10,137" Text="10"
+                                     ToolTip="Set Size to Jog."/>
+                            <Button x:Name="ButtonManualXDec" Click="ButtonManualXDec_Click" Style="{StaticResource styleButton}" Margin="34,29,183,108" VerticalAlignment="Center" HorizontalAlignment="Center" Content="X-"
+                             Width="23" ToolTip="Move X-Axis Negative Direction Step Size."/>
+                            <Button x:Name="ButtonManualXInc" Click="ButtonManualXInc_Click" Style="{StaticResource styleButton}" Margin="84,29,133,108" VerticalAlignment="Center" HorizontalAlignment="Center" Content="X+"
+                             Width="23" ToolTip="Move X-Axis Positive Direction Step Size."/>
+                            <Button x:Name="ButtonManualYInc" Click="ButtonManualYInc_Click" Style="{StaticResource styleButton}" Margin="59,4,158,133" VerticalAlignment="Center" HorizontalAlignment="Center" Content="Y+"
+                             Width="23" ToolTip="Move Y-Axis Positive Direction Step Size."/>
+                            <Button x:Name="ButtonManualYDec" Click="ButtonManualYDec_Click" Style="{StaticResource styleButton}" Margin="59,54,158,83" VerticalAlignment="Center" HorizontalAlignment="Center" Content="Y-"
+                             Width="23" ToolTip="Move Y-Axis Negative Direction Step Size."/>
+                            <Button x:Name="ButtonManualZInc" Click="ButtonManualZInc_Click" Style="{StaticResource styleButton}" Margin="112,4,105,133" VerticalAlignment="Center" HorizontalAlignment="Center" Content="Z+"
+                                Width="23" ToolTip="Move Z-Axis Positive Direction Step Size."/>
+                            <Button x:Name="ButtonManualZDec" Click="ButtonManualZDec_Click" Style="{StaticResource styleButton}" Margin="112,54,105,83" VerticalAlignment="Center" HorizontalAlignment="Center" Content="Z-"
+                                Width="23" ToolTip="Move Z-Axis Negative Direction Step Size."/>
+                            <Button x:Name="ButtonHome" Click="ButtonHome_Click" Style="{StaticResource styleButton}" Margin="12,98,183,39" VerticalAlignment="Center" HorizontalAlignment="Center" Content="Home"
+                                Width="45" ToolTip="Home Machine."/>
+                            <Button x:Name="ButtonX0Y0" Click="ButtonX0Y0_Click" Style="{StaticResource styleButton}" Margin="62,98,130,39" VerticalAlignment="Center" HorizontalAlignment="Center" Content="X0Y0"
+                                Width="48" ToolTip="Move X-Axis and Y-Axis to 0,0 of Work Position."/>
+                            <Button x:Name="ButtonProbe" Click="ButtonProbe_Click" Style="{StaticResource styleButton}" Margin="115,98,79,39" VerticalAlignment="Center" HorizontalAlignment="Center" Content="Probe"
+                                Width="46" ToolTip="Probe to Surface."/>
+                            <Button x:Name="ButtonZeroX" Click="Button_Zero_X_Click" Style="{StaticResource styleButton}" Margin="151,127,66,10" VerticalAlignment="Center" HorizontalAlignment="Center" Content="0X"
+                                Width="23" ToolTip="Zero X-Axis to the current Work Position."/>
+                            <Button x:Name="ButtonZeroY" Click="Button_Zero_Y_Click" Style="{StaticResource styleButton}" Margin="179,127,38,10" VerticalAlignment="Center" HorizontalAlignment="Center" Content="0Y"
+                                Width="23" ToolTip="Zero Y-Axis to the current Work Position."/>
+                            <Button x:Name="ButtonZeroZ" Click="Button_Zero_Z_Click" Style="{StaticResource styleButton}" Margin="207,127,10,10" VerticalAlignment="Center" HorizontalAlignment="Center" Content="0Z"
+                                Width="23" ToolTip="Zero Z-Axis to the current Work Position."/>
+                            <Button x:Name="ButtonStart_Motor" Click="Button_Start_Motor_Click" Style="{StaticResource styleButton}" Margin="12,127,183,10" VerticalAlignment="Center" HorizontalAlignment="Center" Content="Start"
+                                Width="45" ToolTip="Start Spindle Motor."/>
+                            <Button x:Name="ButtonStop_Motor" Click="Button_Stop_Motor_Click" Style="{StaticResource styleButton}" Margin="62,127,130,10" VerticalAlignment="Center" HorizontalAlignment="Center" Content="Stop"
+                                Width="45" ToolTip="Stop Spindle Motor."/>
+                            <Label x:Name="FeedRate_Label_Copy" Content="Step Size" VerticalAlignment="Center" HorizontalAlignment="Center" Width="51" Height="24" Margin="148,1,41,135" FontSize="10"/>
+                        </Grid>
+                    </Expander>
+                </Border>
+                <Border Style="{StaticResource stylePanelOut}">
+                    <Expander Header="Overrides" FontSize="10">
+                        <Grid Width="240" Height="200">
+                            <Button x:Name="ButtonFeedInc10" Click="ButtonFeedInc10_Click" Style="{StaticResource styleButton}" Margin="106,3,103,174" VerticalAlignment="Center" HorizontalAlignment="Center" Content="+10"
+                                Width="31" ToolTip="Increase Feed Override by 10%."/>
+                            <Button x:Name="ButtonFeedDec10" Click="ButtonFeedDec10_Click" Style="{StaticResource styleButton}" Margin="106,32,103,145" VerticalAlignment="Center" HorizontalAlignment="Center" Content="-10"
+                                Width="31" ToolTip="Decrease Feed Override by 10%."/>
+                            <Button x:Name="ButtonFeedInc1" Click="ButtonFeedInc1_Click" Style="{StaticResource styleButton}" Margin="142,3,67,174" VerticalAlignment="Center" HorizontalAlignment="Center" Content="+1"
+                                Width="31" ToolTip="Increase Feed Override by 1%."/>
+                            <Button x:Name="ButtonFeedDec1" Click="ButtonFeedDec1_Click" Style="{StaticResource styleButton}" Margin="142,32,67,145" VerticalAlignment="Center" HorizontalAlignment="Center" Content="-1"
+                                Width="31" ToolTip="Decrease Feed Override by 1%."/>
+                            <Button x:Name="ButtonRapid25" Click="ButtonRapid25_Click" Style="{StaticResource styleButton}" Margin="106,80,103,97" VerticalAlignment="Center" HorizontalAlignment="Center" Content="25%"
+                                Width="31" ToolTip="Set Rapid Override to 25%."/>
+                            <Label x:Name="RapidRate_Label" Margin="22,80,186,96" Content="Rapid" VerticalAlignment="Center" HorizontalAlignment="Center" Width="36" Height="24"/>
+                            <Button x:Name="ButtonRapid50" Click="ButtonRapid50_Click" Style="{StaticResource styleButton}" Margin="142,80,67,97" VerticalAlignment="Center" HorizontalAlignment="Center" Content="50%"
+                                Width="31" ToolTip="Set Rapid Override to 50%."/>
+                            <Button x:Name="ButtonSpindleInc10" Click="ButtonSpindleInc10_Click" Style="{StaticResource styleButton}" Margin="106,128,103,49" VerticalAlignment="Center" HorizontalAlignment="Center" Content="+10"
+                                Width="31" ToolTip="Increase Spindle Override by 10%."/>
+                            <Button x:Name="ButtonSpindleDec10" Click="ButtonSpindleDec10_Click" Style="{StaticResource styleButton}" Margin="106,157,103,20" VerticalAlignment="Center" HorizontalAlignment="Center" Content="-10"
+                                Width="31" ToolTip="Decrease Spindle Override by 10%."/>
+                            <Button x:Name="ButtonSpindleInc1" Click="ButtonSpindleInc1_Click" Style="{StaticResource styleButton}" Margin="142,128,67,49" VerticalAlignment="Center" HorizontalAlignment="Center" Content="+1"
+                                Width="31" ToolTip="Increase Spindle Override by 1%."/>
+                            <Button x:Name="ButtonSpindleDec1" Click="ButtonSpindleDec1_Click" Style="{StaticResource styleButton}" Margin="142,157,67,20" VerticalAlignment="Center" HorizontalAlignment="Center" Content="-1"
+                                Width="31" ToolTip="Decrease Spindle Override by 1%."/>
+                            <Label x:Name="RapidRate_OV" Margin="69,80,139,96" Content="" VerticalAlignment="Center" HorizontalAlignment="Center" Width="32" Height="24"
+                                   ToolTip="Rapid Rate Override Value."/>
+                            <Label x:Name="SpindleRate_Label" Margin="22,141,186,35" Content="Spindle" VerticalAlignment="Center" HorizontalAlignment="Center" Width="42" Height="24"/>
+                            <Label x:Name="SpindleRate_OV" Margin="69,141,139,35" Content="" VerticalAlignment="Center" HorizontalAlignment="Center" Width="32" Height="24"
+                                   ToolTip="Spindle Speed Override Value."/>
+                            <Label x:Name="FeedRate_Label" Margin="22,17,186,159" Content="Feed" VerticalAlignment="Center" HorizontalAlignment="Center" Width="32" Height="24"/>
+                            <Label x:Name="FeedRate_OV" Margin="69,17,139,159" Content="" VerticalAlignment="Center" HorizontalAlignment="Center" Width="32" Height="24"
+                                   ToolTip="Feed Rate Override Value."/>
+                            <Button x:Name="ButtonFeedReset" Click="ButtonFeedReset_Click" Style="{StaticResource styleButton}" Margin="184,18,17,159" VerticalAlignment="Center" HorizontalAlignment="Center" Content="Reset"
+                                Width="39" ToolTip="Reset Feed Override to 100%."/>
+                            <Button x:Name="ButtonRapidReset" Click="ButtonRapidReset_Click" Style="{StaticResource styleButton}" Margin="178,80,23,97" VerticalAlignment="Center" HorizontalAlignment="Center" Content="100%"
+                                Width="39" ToolTip="Reset Rapid Override to 100%."/>
+                            <Button x:Name="ButtonSpindleReset" Click="ButtonSpindleReset_Click" Style="{StaticResource styleButton}" Margin="184,142,17,35" VerticalAlignment="Center" HorizontalAlignment="Center" Content="Reset"
+                                Width="39" ToolTip="Reset Spindle Override to 100%."/>
+                        </Grid>
+                    </Expander>
+                </Border>
 
+            </StackPanel>
             <StackPanel Orientation="Vertical" HorizontalAlignment="Right" FlowDirection="RightToLeft">
                 <Border Style="{StaticResource stylePanelOut}">
                     <Expander Header="Machine">
