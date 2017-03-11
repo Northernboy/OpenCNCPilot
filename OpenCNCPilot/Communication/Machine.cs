@@ -636,7 +636,7 @@ namespace OpenCNCPilot.Communication
 			}
 		}
                                                       //new RegEx for GRBL1.1 Status   
-		private static Regex StatusEx = new Regex(@"<(?'State'Idle|Run|Hold:0|Hold:1|Home|Alarm|Check|Jog|Sleep|Door:0|Door:1|Door:2|Door:3)(?:\|MPos:(?'MX'-?[0-9\.]*),(?'MY'-?[0-9\.]*),(?'MZ'-?[0-9\.]*))?(?:\|WPos:(?'WX'-?[0-9\.]*),(?'WY'-?[0-9\.]*),(?'WZ'-?[0-9\.]*))?(?:\|Bf:(?'Buf'[0-9]*),(?'Buf1'[0-9]*))?(?:\|RX:(?'RX'[0-9]*))?(?:\|Ln:(?'L'[0-9]*))?(?:\|F:(?'F'[0-9\.]*))?(?:\|Pn:(?'PN'P]*))?(?:\|WCO:(?'XO'-?[0-9\.]*),(?'YO'-?[0-9\.]*),(?'ZO'-?[0-9\.]*))?(?:\|Ov:(?'Fe'-?[0-9\.]*),(?'R'-?[0-9\.]*),(?'S'-?[0-9\.]*))?(?:\|Lim:(?'Lim'[0-1]*))?(?:\|Ctl:(?'Ctl'[0-1]*))?>", RegexOptions.Compiled);
+		private static Regex StatusEx = new Regex(@"<(?'State'Idle|Run|Hold:0|Hold:1|Home|Alarm|Check|Jog|Sleep|Door:0|Door:1|Door:2|Door:3)(?:\|MPos:(?'MX'-?[0-9\.]*),(?'MY'-?[0-9\.]*),(?'MZ'-?[0-9\.]*))?(?:\|WPos:(?'WX'-?[0-9\.]*),(?'WY'-?[0-9\.]*),(?'WZ'-?[0-9\.]*))?(?:\|Bf:(?'Buf'[0-9]*),(?'Buf1'[0-9]*))?(?:\|RX:(?'RX'[0-9]*))?(?:\|Ln:(?'L'[0-9]*))?(?:\|F:(?'F'[0-9\.]*))?(?:\|FS:(?'F'-?[0-9\.]*),(?'S'-?[0-9\.]*))?(?:\|Pn:(?'PN'P]*))?(?:\|WCO:(?'XO'-?[0-9\.]*),(?'YO'-?[0-9\.]*),(?'ZO'-?[0-9\.]*))?(?:\|Ov:(?'Fe'-?[0-9\.]*),(?'R'-?[0-9\.]*),(?'S'-?[0-9\.]*))?(?:\|Lim:(?'Lim'[0-1]*))?(?:\|Ctl:(?'Ctl'[0-1]*))?>", RegexOptions.Compiled);
         
         /// <summary>
         /// Parses a recevied status report (answer to '?')
